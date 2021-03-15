@@ -49,10 +49,6 @@ public class Image {
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-
 		bufVtx = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, bufVtx);
 		glBufferData(GL_ARRAY_BUFFER, vtx, GL_STREAM_DRAW);
@@ -68,6 +64,10 @@ public class Image {
 		glBufferData(GL_ARRAY_BUFFER, uv, GL_STATIC_DRAW);
 		glVertexAttribPointer(2, 2, GL_DOUBLE, false, 0, 0);
 
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
