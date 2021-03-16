@@ -1,8 +1,7 @@
 package lwjgl;
 
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL33.*;
 
 import java.nio.FloatBuffer;
@@ -21,6 +20,7 @@ public class Image {
 
 	// Object
 	public int gauss;
+	public int horizon;
 	public double[] wh;
 	public double[] uv;
 	public double[] pos;
@@ -35,6 +35,7 @@ public class Image {
 		this.shader = shader;
 		this.tex = tex;
 		gauss = 0;
+		horizon = 1;
 		wh = new double[] { w, h };
 		uv = new double[] { 1, 0, 0, 0, 0, 1, 1, 1 };
 		pos = new double[] { x, y, z };
@@ -51,7 +52,7 @@ public class Image {
 
 		bufVtx = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, bufVtx);
-		glBufferData(GL_ARRAY_BUFFER, vtx, GL_STREAM_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vtx, GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_DOUBLE, false, 0, 0);
 
 		bufCol = glGenBuffers();
@@ -67,16 +68,23 @@ public class Image {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 	}
 
 	public void draw() {
+		drawImage(tex.idT, tex.idS);
+	}
 
+	public void draw(int texID, int smpID) {
+		drawImage(texID, smpID);
+	}
+
+	private void drawImage(int texID, int smpID) {
 		glUseProgram(shader.program);
-
+		
 		final FloatBuffer fb = BufferUtils.createFloatBuffer(16);
 		Matrix4f model = new Matrix4f().identity();
 		model.translate((float) pos[0], (float) pos[1], (float) pos[2]);
@@ -86,19 +94,20 @@ public class Image {
 		model.rotate((float) (Math.toRadians(rot[2])), 0, 0, 1);
 		glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), false, model.get(fb));
 		glUniform1i(glGetUniformLocation(shader.program, "texSampler"), 0);
-		glUniform1i(glGetUniformLocation(shader.program, "gaussian"), gauss);
-
+		glUniform1i(glGetUniformLocation(shader.program, "gaussian"), gauss);	
+		glUniform1i(glGetUniformLocation(shader.program, "horizon"), horizon);			
+		
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex.idT);
-		glBindSampler(0, tex.idS);
-
+		glBindTexture(GL_TEXTURE_2D, texID);
+		glBindSampler(0, smpID);
+		
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 		glBindVertexArray(0);
-
+		
 		glBindSampler(0, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
-
+		
 		glUseProgram(0);
 	}
 
@@ -108,6 +117,7 @@ public class Image {
 		vtx = new double[] { -w / 2., h / 2., 0., -w / 2., -h / 2., 0., w / 2., h / 2., 0., w / 2., -h / 2., 0. };
 		glBindBuffer(GL_ARRAY_BUFFER, bufVtx);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, vtx);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	public void setColor(double r, double g, double b, double a) {
@@ -124,6 +134,13 @@ public class Image {
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, bufCol);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, col);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	
+	public void setUV(double[] uv) {
+		this.uv = uv;
+		glBindBuffer(GL_ARRAY_BUFFER, bufUV);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, uv);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 

@@ -43,6 +43,7 @@ public class Shader {
 		glUniformMatrix4fv(glGetUniformLocation(program, "projection"), false, projection.get(fb));
 		glUniformMatrix4fv(glGetUniformLocation(program, "model"), false, model.get(fb));
 		glUniform1i(glGetUniformLocation(program, "gaussian"), 0);
+		glUniform1i(glGetUniformLocation(program, "horizon"), 1);
 		glUseProgram(0);
 	}
 
