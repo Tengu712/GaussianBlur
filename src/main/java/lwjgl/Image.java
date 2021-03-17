@@ -114,7 +114,7 @@ public class Image {
 	public void setWH(double w, double h) {
 		wh = new double[] { w, h };
 		double[] vtx = new double[12];
-		vtx = new double[] { -w / 2., h / 2., 0., -w / 2., -h / 2., 0., w / 2., h / 2., 0., w / 2., -h / 2., 0. };
+		vtx = new double[] { w / 2., h / 2., 0., -w / 2., h / 2., 0., -w / 2., -h / 2., 0., w / 2., -h / 2., 0. };
 		glBindBuffer(GL_ARRAY_BUFFER, bufVtx);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, vtx);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
