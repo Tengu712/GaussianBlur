@@ -58,9 +58,8 @@ public class GLInf {
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		shader = new Shader("./src/main/shader");
 		glViewport(0, 0, winf.width, winf.height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		shader = new Shader("./src/main/shader");
 		
 		tex1 = new Texture("./src/main/tex1.png");
 		tex2 = new Texture("./src/main/tex2.png");
